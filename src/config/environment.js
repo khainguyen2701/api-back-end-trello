@@ -1,5 +1,9 @@
-/**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
+import 'dotenv/config';
+
+export const env = {
+  mongodb_uri: process.env.MONGODB_URI,
+  database_name: process.env.DATABASE_NAME,
+  app_host: process.env.APP_HOST,
+  app_port: process.env.APP_PORT,
+  author: process.env.AUTHOR_NAME
+};

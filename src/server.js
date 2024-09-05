@@ -1,31 +1,36 @@
+/* eslint-disable no-console */
+import exitHook from 'async-exit-hook';
 import express from 'express';
-import { connectToMongoDB, getDatabase } from './config/mongodb';
+import { env } from './config/environment';
+import { closeMongoDBConnection, connectToMongoDB } from './config/mongodb';
+import { APIs_v1 } from './routes/v1';
 
 const startServer = () => {
   const app = express();
+  app.use(express.json());
 
-  const hostname = 'localhost';
-  const port = 8017;
+  app.use('/v1', APIs_v1);
 
   app.get('/', async (req, res) => {
-    console.log('Hello', await getDatabase().listCollections().toArray());
     res.end('<h1>Hello World!</h1><hr>');
   });
 
-  app.listen(port, hostname, () => {
-    // eslint-disable-next-line no-console
-    console.log(`Hello Khai.Dev27, I am running at ${hostname}:${port}/`);
+  app.listen(env.app_port, env.app_host, () => {
+    console.log(
+      `Hello ${env.author}, I am running at ${env.app_host}:${env.app_port}/`
+    );
+  });
+
+  exitHook(() => {
+    closeMongoDBConnection();
   });
 };
 
-connectToMongoDB()
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .then(() => {
+(async () => {
+  try {
+    await connectToMongoDB();
     startServer();
-  })
-  .catch((err) => {
-    console.log({ err });
+  } catch (error) {
     process.exit(0);
-  });
+  }
+})();

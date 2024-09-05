@@ -1,10 +1,7 @@
-const DB_PASSWORD = 'BoSxCIMlRvROdi9l';
-export const MONGODB_URI = `mongodb+srv://nguyenvankhai2701:${DB_PASSWORD}@cluster0.uh7ridd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-const DB_NAME = 'khai-dev-27-mern-trello';
-
 import { MongoClient, ServerApiVersion } from 'mongodb';
+import { env } from './environment';
 let trelloDBInstance = null;
-const clientInstance = new MongoClient(MONGODB_URI, {
+const clientInstance = new MongoClient(env.mongodb_uri, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
@@ -15,7 +12,7 @@ const clientInstance = new MongoClient(MONGODB_URI, {
 export const connectToMongoDB = async () => {
   await clientInstance.connect();
 
-  trelloDBInstance = clientInstance.db(DB_NAME);
+  trelloDBInstance = clientInstance.db(env.database_name);
 };
 
 export const getDatabase = () => {
@@ -23,4 +20,8 @@ export const getDatabase = () => {
     throw new Error('Must connect to MongoDB first!');
   }
   return trelloDBInstance;
+};
+
+export const closeMongoDBConnection = async () => {
+  await clientInstance.close();
 };
