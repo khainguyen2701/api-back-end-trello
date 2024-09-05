@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { StatusCodes } from 'http-status-codes';
-import convertErrors from '~/utils/convertErrors';
+import { ApiError, convertErrors } from '~/utils';
 
 const createNew = async (req, res, next) => {
   const schema = Joi.object({
@@ -27,19 +27,17 @@ const createNew = async (req, res, next) => {
     await schema.validateAsync(req.body, {
       abortEarly: false
     });
-    // next(); Controller
-    res.status(StatusCodes.CREATED).json({
-      status: 'success',
-      statusCode: StatusCodes.CREATED,
-      message: 'POST Validation: Create from boards!'
-    });
+    next();
   } catch (error) {
-    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-      status: 'error',
-      statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
-      message: 'POST Validation: Failed!',
-      errors: convertErrors(error.details)
-    });
+    // next(error);
+    const errors = convertErrors(error?.details ?? []);
+    const errorMessage = new Error(error).message;
+    const customError = new ApiError(
+      StatusCodes.UNPROCESSABLE_ENTITY,
+      errorMessage,
+      errors
+    );
+    next(customError);
   }
 };
 

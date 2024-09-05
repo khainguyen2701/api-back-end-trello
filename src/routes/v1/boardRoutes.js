@@ -1,6 +1,7 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { boardValidation } from '~/validations/boardValidation';
+import { boardController } from '~/controllers';
+import { boardValidation } from '~/validations';
 
 const router = express.Router();
 
@@ -13,6 +14,6 @@ router
       message: 'GET: Hello from boards!'
     });
   })
-  .post(boardValidation.createNew);
+  .post(boardValidation.createNew, boardController.createNew);
 
 export const boardRoutes = router;

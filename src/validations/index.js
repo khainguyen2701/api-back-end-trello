@@ -1,0 +1,1 @@
+export { boardValidation } from './boardValidation';

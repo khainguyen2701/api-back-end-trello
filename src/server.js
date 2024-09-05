@@ -4,12 +4,15 @@ import express from 'express';
 import { env } from './config/environment';
 import { closeMongoDBConnection, connectToMongoDB } from './config/mongodb';
 import { APIs_v1 } from './routes/v1';
+import { errorHandlingMiddleware } from './middlewares';
 
 const startServer = () => {
   const app = express();
   app.use(express.json());
 
   app.use('/v1', APIs_v1);
+
+  app.use(errorHandlingMiddleware);
 
   app.get('/', async (req, res) => {
     res.end('<h1>Hello World!</h1><hr>');
