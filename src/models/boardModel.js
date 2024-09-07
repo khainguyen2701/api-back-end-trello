@@ -15,11 +15,18 @@ const boardCollectionSchema = Joi.object({
   _destroy: Joi.boolean().default(false) // giá trị xác định bản ghi có được xoá chưa
 });
 
+const validateBeforeCreate = async (data) => {
+  return await boardCollectionSchema.validateAsync(data, {
+    abortEarly: true
+  });
+};
+
 const createNew = async (data) => {
   try {
+    const validate = await validateBeforeCreate(data);
     const createBoard = await getDatabase()
       .collection(BOARD_COLLECTION_NAME)
-      .insertOne(data);
+      .insertOne(validate);
 
     return createBoard;
   } catch (error) {
