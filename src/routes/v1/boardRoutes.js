@@ -16,4 +16,6 @@ router
   })
   .post(boardValidation.createNew, boardController.createNew);
 
+router.route('/:boardId').get(boardController.getOneBoardById);
+
 export const boardRoutes = router;

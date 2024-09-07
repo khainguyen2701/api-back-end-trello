@@ -3,13 +3,16 @@ import exitHook from 'async-exit-hook';
 import express from 'express';
 import { env } from './config/environment';
 import { closeMongoDBConnection, connectToMongoDB } from './config/mongodb';
+import {
+  actionResponseMiddleware,
+  errorHandlingMiddleware
+} from './middlewares';
 import { APIs_v1 } from './routes/v1';
-import { errorHandlingMiddleware } from './middlewares';
 
 const startServer = () => {
   const app = express();
   app.use(express.json());
-
+  app.use(actionResponseMiddleware);
   app.use('/v1', APIs_v1);
 
   app.use(errorHandlingMiddleware);

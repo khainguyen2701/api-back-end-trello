@@ -41,6 +41,30 @@ const createNew = async (req, res, next) => {
   }
 };
 
+const getOneBoardById = async (req, res, next) => {
+  const schema = Joi.object({
+    id: Joi.string().required().messages({
+      'any.required': 'Id is required!',
+      'string.base': 'Id must be a string!'
+    })
+  });
+  try {
+    await schema.validateAsync(req.params, {
+      abortEarly: false
+    });
+    next();
+  } catch (error) {
+    const errorMessage = new Error(error).message;
+    const customError = new ApiError(
+      StatusCodes.UNPROCESSABLE_ENTITY,
+      errorMessage,
+      []
+    );
+    next(customError);
+  }
+};
+
 export const boardValidation = {
-  createNew
+  createNew,
+  getOneBoardById
 };
