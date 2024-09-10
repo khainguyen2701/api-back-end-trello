@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import { boardModel } from '~/models';
 import { convertStringToObjectId, slugify } from '~/utils';
 
@@ -26,10 +27,28 @@ const createNew = async (body) => {
 const getOneBoardById = async (boardId) => {
   try {
     const id = convertStringToObjectId(boardId);
-    const board = await boardModel.findOneById(id);
-    return board;
+    const board = await boardModel.getDetailBoard(id);
+
+    const cloneDeepBoard = cloneDeep(board);
+    cloneDeepBoard.columns.forEach((element) => {
+      element.cards = cloneDeepBoard.cards.filter(
+        (item) => item.columnId.toString() === element._id.toString()
+      );
+    });
+    delete cloneDeepBoard.cards;
+
+    return cloneDeepBoard;
   } catch (error) {
     throw error;
   }
 };
-export const boardService = { createNew, getOneBoardById };
+
+const getListBoards = async () => {
+  try {
+    const boards = await boardModel.getAllBoards();
+    return boards;
+  } catch (error) {
+    throw error;
+  }
+};
+export const boardService = { createNew, getOneBoardById, getListBoards };

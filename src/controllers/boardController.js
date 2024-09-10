@@ -22,7 +22,17 @@ const getOneBoardById = async (req, res, next) => {
   }
 };
 
+const getListBoards = async (req, res, next) => {
+  try {
+    const boards = await boardService.getListBoards();
+    res.actionResponse('get', boards, null, StatusCodes.OK);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const boardController = {
   createNew,
-  getOneBoardById
+  getOneBoardById,
+  getListBoards
 };

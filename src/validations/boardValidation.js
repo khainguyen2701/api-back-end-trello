@@ -1,9 +1,10 @@
 import Joi from 'joi';
 import { StatusCodes } from 'http-status-codes';
-import { ApiError, convertErrors } from '~/utils';
+import { ApiError, boardType, convertErrors } from '~/utils';
 
 const createNew = async (req, res, next) => {
   const schema = Joi.object({
+    type: Joi.string().valid(boardType.private, boardType.public).required(),
     title: Joi.string().required().min(3).max(30).trim().strict().messages({
       'any.required': 'Title is required!',
       'string.trim': 'Title is not allowed to be empty!',

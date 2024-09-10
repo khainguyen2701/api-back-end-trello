@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import exitHook from 'async-exit-hook';
 import express from 'express';
+import cors from 'cors';
 import { env } from './config/environment';
 import { closeMongoDBConnection, connectToMongoDB } from './config/mongodb';
 import {
@@ -8,9 +9,11 @@ import {
   errorHandlingMiddleware
 } from './middlewares';
 import { APIs_v1 } from './routes/v1';
+import { corsOptions } from './config/cors';
 
 const startServer = () => {
   const app = express();
+  app.use(cors(corsOptions));
   app.use(express.json());
   app.use(actionResponseMiddleware);
   app.use('/v1', APIs_v1);
