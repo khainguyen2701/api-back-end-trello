@@ -1,6 +1,7 @@
+import { StatusCodes } from 'http-status-codes';
 import { cloneDeep } from 'lodash';
 import { boardModel } from '~/models';
-import { convertStringToObjectId, slugify } from '~/utils';
+import { ApiError, convertStringToObjectId, slugify } from '~/utils';
 
 /* eslint-disable no-useless-catch */
 
@@ -28,6 +29,9 @@ const getOneBoardById = async (boardId) => {
   try {
     const id = convertStringToObjectId(boardId);
     const board = await boardModel.getDetailBoard(id);
+    if (!board) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Not found board', []);
+    }
 
     const cloneDeepBoard = cloneDeep(board);
     cloneDeepBoard.columns.forEach((element) => {

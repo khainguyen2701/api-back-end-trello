@@ -87,10 +87,8 @@ const getDetailBoard = async (id) => {
         }
       ])
       .toArray();
-    if (!findOneById) {
-      throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, 'No data valid', []);
-    }
-    return findOneById[0] || {};
+
+    return findOneById[0] || null;
   } catch (error) {
     throw new Error(error);
   }
