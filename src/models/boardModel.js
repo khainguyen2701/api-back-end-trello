@@ -1,10 +1,16 @@
 import Joi from 'joi';
-import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from './validators';
 import { getDatabase } from '~/config/mongodb';
-import { ApiError, boardType } from '~/utils';
+import {
+  ApiError,
+  boardType,
+  convertStringToObjectId,
+  OBJECT_ID_RULE,
+  OBJECT_ID_RULE_MESSAGE
+} from '~/utils';
 import { StatusCodes } from 'http-status-codes';
 import { columnModel } from './columnModel';
 import { cardModel } from './cardModel';
+import { ObjectId, ReturnDocument } from 'mongodb';
 
 const BOARD_COLLECTION_NAME = 'boards';
 const boardCollectionSchema = Joi.object({
@@ -106,11 +112,34 @@ const getAllBoards = async () => {
   }
 };
 
+const pushColumnIds = async (column) => {
+  try {
+    const data = await getDatabase()
+      .collection(BOARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: convertStringToObjectId(column.boardId)
+        },
+        {
+          $push: {
+            columnOrderIds: convertStringToObjectId(column._id)
+          }
+        },
+        { returnDocument: 'after' }
+      );
+
+    return data.value;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export const boardModel = {
   boardCollectionSchema,
   BOARD_COLLECTION_NAME,
   createNew,
   findOneById,
   getAllBoards,
-  getDetailBoard
+  getDetailBoard,
+  pushColumnIds
 };

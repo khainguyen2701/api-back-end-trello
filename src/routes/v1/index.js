@@ -1,6 +1,8 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { boardRoutes } from './boardRoutes';
+import { columnRoutes } from './columnRoute';
+import { cardRoutes } from './cardRoute';
 
 const router = express.Router();
 
@@ -11,7 +13,8 @@ router.get('/status', async (req, res) => {
   });
 });
 
-// Tách riêng từng APIs vào từng file riêng biệt
 router.use('/boards', boardRoutes);
+router.use('/columns', columnRoutes);
+router.use('/cards', cardRoutes);
 
 export const APIs_v1 = router;
